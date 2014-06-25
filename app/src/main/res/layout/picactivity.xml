@@ -20,7 +20,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="选择图片"
+            android:text="加密图片"
             android:id="@+id/btn_choseImg" />
 
         <Button
@@ -40,7 +40,8 @@
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/editText1" />
+        android:id="@+id/editText1"
+        android:text="20111003511 余东熹" />
 
     <EditText
         android:layout_width="match_parent"

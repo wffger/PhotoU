@@ -80,7 +80,6 @@ public class PicActivity extends Activity{
                 {
                     String result = new CryptoTools().encode(plaintext);
                     editText2.setText(result);
-//                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 }catch (Exception e){}
             }
         });
@@ -93,7 +92,6 @@ public class PicActivity extends Activity{
                 {
                     String result = new CryptoTools().decode(plaintext);
                     editText2.setText(result);
-//                    Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
                 }catch (Exception e){}
             }
         });
@@ -111,22 +109,16 @@ public class PicActivity extends Activity{
 
             switch (requestCode){
                 case 1:
-                    String plaintext = editText1.getText().toString();
-/*                    try
-                    {
-                        String result = new CryptoTools().encode(imgName);
-                        Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();
-                    }catch (Exception e){}*/
-//                    threadCount++;
-/*                    Thread thread = new Thread(new Runnable() {
+                    Thread thread = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             Looper.prepare();
                             FileHelper fileHelper = new FileHelper();
+                            fileHelper.move2E(imgPath);
                             Looper.loop();
                         }
                     });
-                    thread.start();*/
+                    thread.start();
                     break;
                 case 2:
                     Base64Util bsf = new Base64Util();
@@ -134,6 +126,8 @@ public class PicActivity extends Activity{
                     {
                         bsf.ShowImg(imgPath, iv);
                         bsf.encryptImg(imgPath);
+                        FileHelper fileHelper = new FileHelper();
+                        fileHelper.move2E(imgPath+".usnea");
                     }catch (IOException e) {e.printStackTrace();}
                     break;
             }
