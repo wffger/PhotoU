@@ -1,4 +1,4 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -6,6 +6,9 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import wffgerYu.photoU.AppManager;
+import wffgerYu.photoU.R;
 
 
 public class Home extends Activity {

@@ -5,11 +5,11 @@ android {
     buildToolsVersion "19.1.0"
 
     defaultConfig {
-        applicationId "wffgerYu.photo2u"
-        minSdkVersion 17
+        applicationId "wffgerYu.photoU"
+        minSdkVersion 14
         targetSdkVersion 19
-        versionCode 1
-        versionName "1.0"
+        versionCode 140630
+        versionName "2.0"
     }
     buildTypes {
         release {

@@ -1,8 +1,9 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU.common;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.util.Base64;
+import android.net.Uri;
+import android.os.Environment;
 import android.widget.ImageView;
 
 import java.io.BufferedInputStream;
@@ -16,13 +17,9 @@ import java.lang.ref.WeakReference;
 /**
  * Created by Kingsun on 14-6-17.
  */
-public class Base64Util {
+public class ImgUtils {
 
     public static final int XOR_CONST=0x99;
-    public void Base64Encoder() {
-
-    }
-
     public static Bitmap convert2Bitmap(String path, int w, int h) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;     //只获取图大小
@@ -42,19 +39,6 @@ public class Base64Util {
         WeakReference<Bitmap> weak = new WeakReference<Bitmap>(BitmapFactory.decodeFile(path, opts));
         return Bitmap.createScaledBitmap(weak.get(), w, h, true);
     }
-
-/*
-    public static  void encryptImg(File src, File destination) throws Exception {
-        ImageInputStream ips = new FileImageInputStream(src);
-        ImageOutputStream ops = new FileImageOutputStream(destination);
-        int read;
-        while ((read=ips.read()) > -1) {
-            ops.write(read^XOR_CONST);
-        }
-        ops.flush();
-        ops.close();
-        ips.close();
-    }*/
 
     public static  void encryptImg(String uri) throws IOException {
         //创建加密文件，扩展名为usnea
@@ -77,6 +61,33 @@ public class Base64Util {
         fos.close();
         bis.close();
         fis.close();
+    }
+    public static  void decryptImg() {
+        try {
+            File sd = Environment.getExternalStorageDirectory();
+            String Epath = sd.getPath() + "/.photoU/e/";
+            String Dpath = sd.getPath() + "/.photoU/d/";
+            File test1 = new File(Epath);
+            if (!test1.exists()) test1.mkdirs();  //创建多级目录记得使用mkdirs
+            File test2 = new File(Dpath);
+            if (!test2.exists()) test2.mkdirs();  //创建多级目录记得使用mkdirs
+            File srcFolder = new File(Epath);
+            File[] files = srcFolder.listFiles();
+            for(File file : files)
+            {
+                if(file.isFile())
+                {
+                    encryptImg(file.getPath());
+                    String currentFilePath =  file.getPath()+".usnea";
+                    String newName = file.getName().substring(0, file.getName().length()-6);
+                    file.delete();
+                    File currentFile = new File(currentFilePath);
+                    File newFile = new File(Dpath+newName);
+                    currentFile.renameTo(newFile);
+                }
+            }
+
+        }catch (IOException e){e.printStackTrace();}
     }
 
     public static void ShowImg(String uri, ImageView iv) throws IOException {

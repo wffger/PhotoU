@@ -1,4 +1,4 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU;
 
 import android.app.Activity;
 import android.app.ActivityManager;

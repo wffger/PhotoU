@@ -1,4 +1,4 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU.common;
 
 import android.os.Environment;
 
@@ -16,7 +16,7 @@ import java.util.Date;
 /**
  * Created by Kingsun on 14-6-22.
  */
-public class FileHelper {
+public class FileUtils {
     public void move2E(String src) {
         try{
             //确定存储解密文件的目录存在
@@ -32,12 +32,26 @@ public class FileHelper {
             oldFile.renameTo(newFile);
         }catch (Exception e){e.printStackTrace();}
     }
-    public void save2SDCard(String content) {
+    public void move2D(String src) {
+        try{
+            //确定存储解密文件的目录存在
+            File sd = Environment.getExternalStorageDirectory();
+            String path = sd.getPath() + "/.photoU/d/";
+            File test = new File(path);
+            if (!test.exists()) test.mkdirs();  //创建多级目录记得使用mkdirs
+
+            //
+            File oldFile = new File(src);
+            File newPath = new File(path);
+            File newFile = new File(path + oldFile.getName());
+            oldFile.renameTo(newFile);
+        }catch (Exception e){e.printStackTrace();}
+    }
+/*    public void save2SDCard(String content) {
         FileOutputStream fos = null;
         String hh = "/r";
         try{
             SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-//            Date curDate = new Date(System.currentTimeMillis());
             String fileName=formatter.format(new Date());
             fileName = "qb_" + fileName + ".txt";
             File sd = Environment.getExternalStorageDirectory();
@@ -76,5 +90,5 @@ public class FileHelper {
             }
         }catch (IOException e){}
         return content;
-    }
+    }*/
 }

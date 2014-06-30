@@ -1,39 +1,34 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU.ui;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.HandlerThread;
 import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.Toast;
 
 import java.io.IOException;
-import java.util.Objects;
-import java.util.logging.Handler;
-import java.util.logging.LogRecord;
+
+import wffgerYu.photoU.bean.CryptoTools;
+import wffgerYu.photoU.common.FileUtils;
+import wffgerYu.photoU.common.ImgUtils;
+import wffgerYu.photoU.R;
 
 /**
  * Created by Kingsun on 14-6-17.
  */
 public class PicActivity extends Activity{
     /** Called when the activity is first created. */
-    private Button moveImg = null;
-    private Button choseImg = null;
+    private Button decryptImg = null;
+    private Button encryptImg = null;
     private Button btn_encode = null;
     private Button btn_decode =null;
     private EditText editText1 = null;
     private EditText editText2 = null;
-    private ImageView iv = null;
-
     public static Uri imgUri = null;    //使得可以传递给子线程函数
     public static String imgName;
     public static String imgPath;
@@ -46,30 +41,35 @@ public class PicActivity extends Activity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.picactivity);
 
-        iv = (ImageView)findViewById(R.id.iv);
-        iv.setLayerType(View.LAYER_TYPE_SOFTWARE, null);    //关闭硬件加速
-
-        moveImg = (Button)findViewById(R.id.btn_moveImg);
-        moveImg.setOnClickListener(new OnClickListener() {
+        decryptImg = (Button)findViewById(R.id.btn_decryptImg);
+        decryptImg.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
+                Thread thread = new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Looper.prepare();
+                        ImgUtils deImg = new ImgUtils();
+                        deImg.decryptImg();
+                        Looper.loop();
+                    }
+                });
+                thread.start();
+            }
+        });
+
+        encryptImg = (Button)findViewById(R.id.btn_encryptImg);
+        encryptImg.setOnClickListener(new OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
                 Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
                 startActivityForResult(intent, 1);
             }
         });
 
-        choseImg = (Button)findViewById(R.id.btn_choseImg);
-        choseImg.setOnClickListener(new OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(intent, 2);
-            }
-        });
-
         editText1 = (EditText)findViewById(R.id.editText1);
-        editText2 = (EditText)findViewById(R.id.editText2);
+        editText2 = (EditText)findViewById(R.id.edt_pswd2);
         
         btn_encode = (Button)findViewById(R.id.btn_encode);
         btn_encode.setOnClickListener(new OnClickListener() {
@@ -113,22 +113,17 @@ public class PicActivity extends Activity{
                         @Override
                         public void run() {
                             Looper.prepare();
-                            FileHelper fileHelper = new FileHelper();
-                            fileHelper.move2E(imgPath);
+                            ImgUtils bsf = new ImgUtils();
+                            try
+                            {
+                                bsf.encryptImg(imgPath);
+                            }catch (IOException e) {e.printStackTrace();}
+                            FileUtils fileUtils = new FileUtils();
+                            fileUtils.move2E(imgPath+".usnea");
                             Looper.loop();
                         }
                     });
                     thread.start();
-                    break;
-                case 2:
-                    Base64Util bsf = new Base64Util();
-                    try
-                    {
-                        bsf.ShowImg(imgPath, iv);
-                        bsf.encryptImg(imgPath);
-                        FileHelper fileHelper = new FileHelper();
-                        fileHelper.move2E(imgPath+".usnea");
-                    }catch (IOException e) {e.printStackTrace();}
                     break;
             }
         }
@@ -137,7 +132,7 @@ public class PicActivity extends Activity{
             Uri uri = data.getData();
             Cursor cursor = this.getContentResolver().query(uri, null, null, null, null);
             cursor.moveToFirst();
-            Base64Util bsf = new Base64Util();
+            ImgUtils bsf = new ImgUtils();
             String imgName = cursor.getString(0);
             String imgPath = cursor.getString(1);
             try

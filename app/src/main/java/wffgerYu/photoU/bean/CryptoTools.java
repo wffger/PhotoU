@@ -1,4 +1,4 @@
-package wffgerYu.photo2u;
+package wffgerYu.photoU.bean;
 import android.util.Base64;
 
 import java.security.Key;
