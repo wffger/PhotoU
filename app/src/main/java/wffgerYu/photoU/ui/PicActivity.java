@@ -1,6 +1,7 @@
 package wffgerYu.photoU.ui;
 
 import android.app.Activity;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -94,6 +95,8 @@ public class PicActivity extends Activity{
                     cryptoTools.setDESKey(textKey);
                     String result = new CryptoTools().encode(inputText).trim(); //用trim去除末尾换行符
                     edt_output.setText(result);
+                    ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
+                    cm.setText(result);
                 }catch (Exception e){}
             }
         });
