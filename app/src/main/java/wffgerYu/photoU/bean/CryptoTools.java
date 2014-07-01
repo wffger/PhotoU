@@ -1,4 +1,5 @@
 package wffgerYu.photoU.bean;
+import android.content.SharedPreferences;
 import android.util.Base64;
 
 import java.security.Key;
@@ -13,8 +14,8 @@ import javax.crypto.spec.IvParameterSpec;
  * Created by Kingsun on 14-6-22.
  */
 public class CryptoTools {
-    private static final byte[] DESKey = "18825162256".getBytes(); //密钥，不能太短
-    private static final byte[] DESIV = "31479308".getBytes();  //向量,必须为8byte
+    protected static byte[] DESKey = "PhotoUdefaultKey".getBytes(); //密钥，不能太短
+    protected static byte[] DESIv = "PhotoUIv".getBytes();  //向量,必须为8byte
 
     static AlgorithmParameterSpec iv = null;    //加密算法参数接口
     private static Key key = null;
@@ -22,10 +23,14 @@ public class CryptoTools {
     public CryptoTools(){
         try{
             DESKeySpec keySpec = new DESKeySpec(DESKey);    //密钥参数设置
-            iv = new IvParameterSpec(DESIV);    //向量设置
+            iv = new IvParameterSpec(DESIv);    //向量设置
             SecretKeyFactory keyFactory = SecretKeyFactory.getInstance("DES");  //密钥工厂
             key = keyFactory.generateSecret(keySpec);   //获得密钥对象
         }catch (Exception e){e.printStackTrace();}
+    }
+
+    public void setDESKey(byte[] textKey){
+        this.DESKey=textKey;
     }
 
     public String encode(String data) {

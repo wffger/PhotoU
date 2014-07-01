@@ -1,15 +1,20 @@
 package wffgerYu.photoU.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Looper;
+import android.util.Base64;
+import android.view.Gravity;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -22,19 +27,19 @@ import wffgerYu.photoU.R;
  * Created by Kingsun on 14-6-17.
  */
 public class PicActivity extends Activity{
-    /** Called when the activity is first created. */
     private Button decryptImg = null;
     private Button encryptImg = null;
     private Button btn_encode = null;
     private Button btn_decode =null;
-    private EditText editText1 = null;
-    private EditText editText2 = null;
+    private EditText edt_input = null;
+    private EditText edt_output = null;
     public static Uri imgUri = null;    //使得可以传递给子线程函数
     public static String imgName;
     public static String imgPath;
-    public static int threadCount = 0;
-    public static final Object lock = new Object();
 
+    private EditText edt_passwd = null;
+    private EditText edt_passwd2 = null;
+    private Button btn_passwd = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,6 +47,15 @@ public class PicActivity extends Activity{
         setContentView(R.layout.picactivity);
 
         decryptImg = (Button)findViewById(R.id.btn_decryptImg);
+        encryptImg = (Button)findViewById(R.id.btn_encryptImg);
+        btn_encode = (Button)findViewById(R.id.btn_encode);
+        btn_decode = (Button)findViewById(R.id.btn_decode);
+        edt_input = (EditText)findViewById(R.id.edt_input);
+        edt_output = (EditText)findViewById(R.id.edt_output);
+        edt_passwd = (EditText)findViewById(R.id.edt_passwd);
+        edt_passwd2 = (EditText)findViewById(R.id.edt_passwd2);
+        btn_passwd = (Button)findViewById(R.id.btn_passwd);
+        
         decryptImg.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,7 +72,6 @@ public class PicActivity extends Activity{
             }
         });
 
-        encryptImg = (Button)findViewById(R.id.btn_encryptImg);
         encryptImg.setOnClickListener(new OnClickListener() {
 
             @Override
@@ -68,31 +81,53 @@ public class PicActivity extends Activity{
             }
         });
 
-        editText1 = (EditText)findViewById(R.id.editText1);
-        editText2 = (EditText)findViewById(R.id.edt_pswd2);
-        
-        btn_encode = (Button)findViewById(R.id.btn_encode);
-        btn_encode.setOnClickListener(new OnClickListener() {
+        btn_encode.setOnClickListener(new OnClickListener() {   //加密文本
             @Override
             public void onClick(View view) {
-                String plaintext = editText1.getText().toString();
+                String inputText = edt_input.getText().toString();
                 try
                 {
-                    String result = new CryptoTools().encode(plaintext);
-                    editText2.setText(result);
+                    Context context = PicActivity.this;
+                    SharedPreferences photoUsp = context.getSharedPreferences("photoUsp", MODE_PRIVATE);
+                    byte[] textKey = Base64.decode(photoUsp.getString("textKey", null), Base64.DEFAULT);
+                    CryptoTools cryptoTools = new CryptoTools();
+                    cryptoTools.setDESKey(textKey);
+                    String result = new CryptoTools().encode(inputText).trim(); //用trim去除末尾换行符
+                    edt_output.setText(result);
                 }catch (Exception e){}
             }
         });
-        btn_decode = (Button)findViewById(R.id.btn_decode);
-        btn_decode.setOnClickListener(new OnClickListener() {
+        btn_decode.setOnClickListener(new OnClickListener() {   //解密文本
             @Override
             public void onClick(View view) {
-                String plaintext = editText1.getText().toString();
+                String inputText = edt_input.getText().toString();
                 try
                 {
-                    String result = new CryptoTools().decode(plaintext);
-                    editText2.setText(result);
+                    String result = new CryptoTools().decode(inputText);
+                    edt_output.setText(result);
                 }catch (Exception e){}
+            }
+        });
+
+        btn_passwd.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String passwd = edt_passwd.getText().toString().trim();
+                String passwd2 = edt_passwd2.getText().toString().trim();
+
+                if(passwd.isEmpty() || passwd.getBytes().length<10 || !passwd.equals(passwd2))
+                {
+                    Toast toast = Toast.makeText(PicActivity.this, "请确保长度和匹配", Toast.LENGTH_LONG);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 10, 10);
+                    toast.show();
+                }
+                else{
+                    Context context = PicActivity.this;
+                    SharedPreferences photoUsp = context.getSharedPreferences("photoUsp", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = photoUsp.edit();
+                    editor.putString("textKey", Base64.encodeToString(passwd.getBytes(), Base64.DEFAULT));
+                    editor.commit();
+                }
             }
         });
     }
@@ -127,27 +162,5 @@ public class PicActivity extends Activity{
                     break;
             }
         }
-/*        if (resultCode == Activity.RESULT_OK)
-        {
-            Uri uri = data.getData();
-            Cursor cursor = this.getContentResolver().query(uri, null, null, null, null);
-            cursor.moveToFirst();
-            ImgUtils bsf = new ImgUtils();
-            String imgName = cursor.getString(0);
-            String imgPath = cursor.getString(1);
-            try
-            {
-                bsf.ShowImg(imgPath, iv);
-                bsf.encryptImg(imgPath);
-            }catch (IOException e) {e.printStackTrace();}
-*//*            String result = "";
-            for (int i = 0; i < cursor.getColumnCount(); i++)
-            {// 取得图片uri的列名和此列的详细信息
-//                System.out.println(i + "-" + cursor.getColumnName(i) + "-" + cursor.getString(i));
-                result=result+i + "-" + cursor.getColumnName(i) + "-" + cursor.getString(i) + "\n";
-            }
-            Toast.makeText(getApplicationContext(), result, Toast.LENGTH_LONG).show();*//*
-
-        }*/
     }
 }
