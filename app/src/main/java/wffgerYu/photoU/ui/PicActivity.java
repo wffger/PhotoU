@@ -1,6 +1,7 @@
 package wffgerYu.photoU.ui;
 
 import android.app.Activity;
+import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
@@ -96,7 +97,7 @@ public class PicActivity extends Activity{
                     String result = new CryptoTools().encode(inputText).trim(); //用trim去除末尾换行符
                     edt_output.setText(result);
                     ClipboardManager cm = (ClipboardManager)getSystemService(CLIPBOARD_SERVICE);
-                    cm.setText(result);
+                    cm.setPrimaryClip(ClipData.newPlainText("cipherText", result));
                 }catch (Exception e){}
             }
         });
