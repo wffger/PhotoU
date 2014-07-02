@@ -64,14 +64,13 @@ public class ImgUtils {
     }
     public static  void decryptImg() {
         try {
-            File sd = Environment.getExternalStorageDirectory();
-            String Epath = sd.getPath() + "/.photoU/e/";
-            String Dpath = sd.getPath() + "/.photoU/d/";
-            File test1 = new File(Epath);
+            String ePath = Environment.getExternalStorageDirectory().getPath() + "/.photoU/e/";
+            String dPath = Environment.getExternalStorageDirectory().getPath() + "/.photoU/d/";
+            File test1 = new File(ePath);
             if (!test1.exists()) test1.mkdirs();  //创建多级目录记得使用mkdirs
-            File test2 = new File(Dpath);
+            File test2 = new File(dPath);
             if (!test2.exists()) test2.mkdirs();  //创建多级目录记得使用mkdirs
-            File srcFolder = new File(Epath);
+            File srcFolder = new File(ePath);
             File[] files = srcFolder.listFiles();
             for(File file : files)
             {
@@ -80,13 +79,12 @@ public class ImgUtils {
                     encryptImg(file.getPath());
                     String currentFilePath =  file.getPath()+".usnea";
                     String newName = file.getName().substring(0, file.getName().length()-6);
-                    file.delete();
+                    file.delete();  //删除原加密文件
                     File currentFile = new File(currentFilePath);
-                    File newFile = new File(Dpath+newName);
+                    File newFile = new File(dPath+newName);
                     currentFile.renameTo(newFile);
                 }
             }
-
         }catch (IOException e){e.printStackTrace();}
     }
 

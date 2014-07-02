@@ -1,94 +1,75 @@
 package wffgerYu.photoU.common;
 
 import android.os.Environment;
-
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
+import java.nio.channels.FileChannel;
 
 /**
  * Created by Kingsun on 14-6-22.
  */
 public class FileUtils {
+    /*参数：原文件路径
+    * 功能：移动文件到e加密目录*/
     public void move2E(String src) {
         try{
             //确定存储解密文件的目录存在
-            File sd = Environment.getExternalStorageDirectory();
-            String path = sd.getPath() + "/.photoU/e/";
-            File test = new File(path);
+            String destPath = Environment.getExternalStorageDirectory().getPath() + "/.photoU/e/";
+            File test = new File(destPath);
             if (!test.exists()) test.mkdirs();  //创建多级目录记得使用mkdirs
 
-            //
-            File oldFile = new File(src);
-            File newPath = new File(path);
-            File newFile = new File(path + oldFile.getName());
-            oldFile.renameTo(newFile);
+            File sourceFile = new File(src);
+            File whitherFile = new File(destPath+sourceFile.getName());
+            copyFile(sourceFile, whitherFile);
+            sourceFile.delete();
+
         }catch (Exception e){e.printStackTrace();}
     }
     public void move2D(String src) {
         try{
             //确定存储解密文件的目录存在
-            File sd = Environment.getExternalStorageDirectory();
-            String path = sd.getPath() + "/.photoU/d/";
-            File test = new File(path);
+            String destPath = Environment.getExternalStorageDirectory().getPath() + "/.photoU/d/";
+            File test = new File(destPath);
             if (!test.exists()) test.mkdirs();  //创建多级目录记得使用mkdirs
 
-            //
-            File oldFile = new File(src);
-            File newPath = new File(path);
-            File newFile = new File(path + oldFile.getName());
-            oldFile.renameTo(newFile);
+            File sourceFile = new File(src);
+            File whitherFile = new File(destPath + sourceFile.getName());
+            copyFile(sourceFile, whitherFile);
         }catch (Exception e){e.printStackTrace();}
     }
-/*    public void save2SDCard(String content) {
-        FileOutputStream fos = null;
-        String hh = "/r";
-        try{
-            SimpleDateFormat formatter = new SimpleDateFormat("yyMMdd");
-            String fileName=formatter.format(new Date());
-            fileName = "qb_" + fileName + ".txt";
-            File sd = Environment.getExternalStorageDirectory();
-            String path=sd.getPath()+"/QrBike";
-            File test = new File(path);
-            if (!test.exists()) test.mkdir();
-            File file = new File(path,fileName);
-            fos = new FileOutputStream(file,true);
-            if(file.length()==0)
-            {
-                fos.write(content.getBytes());
-            }else
-            {
-                content="\r"+content;
-                fos.write(content.getBytes());
-            }
-        }catch (Exception e){e.printStackTrace();}
+
+    /*This is Rigo Vides's Answer in the Stack Overflow*/
+    public static void copyFile(File sourceFile, File whitherFile) throws IOException {
+        if(!whitherFile.exists()) {
+            whitherFile.createNewFile();
+        }
+
+        FileChannel source = null;
+        FileChannel destination = null;
+        try {
+            source = new FileInputStream(sourceFile).getChannel();
+            destination = new FileOutputStream(whitherFile).getChannel();
+
+            // previous code: destination.transferFrom(source, 0, source.size());
+            // to avoid infinite loops, should be:
+            long count = 0;
+            long size = source.size();
+            while((count += destination.transferFrom(source, count, size-count))<size);
+        }
         finally {
-            try{fos.close();}catch (IOException e){e.printStackTrace();}
+            if(source != null) {
+                source.close();
+            }
+            if(destination != null) {
+                destination.close();
+            }
         }
     }
 
-    public static ArrayList ReadTxt(String path) {
-        ArrayList content = new ArrayList();
-        File file = new File(path);
-        try {
-            InputStream ips = new FileInputStream(file);
-            if(ips!= null) {
-                InputStreamReader ipsReader = new InputStreamReader(ips);
-                BufferedReader bReader = new BufferedReader(ipsReader);
-                String line;
-                while((line=bReader.readLine()) != null) {
-                    content.add(line);
-                }
-                ips.close();
-            }
-        }catch (IOException e){}
-        return content;
-    }*/
+    public void delete(String source) {
+        File srcFile = new File(source);
+        srcFile.delete();
+    }
 }

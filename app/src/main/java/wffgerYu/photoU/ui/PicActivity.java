@@ -71,6 +71,9 @@ public class PicActivity extends Activity{
                     }
                 });
                 thread.start();
+                Toast toast = Toast.makeText(PicActivity.this, "解密完成", Toast.LENGTH_SHORT);
+                toast.setGravity(Gravity.CENTER_VERTICAL, 10, 10);
+                toast.show();
             }
         });
 
@@ -121,7 +124,7 @@ public class PicActivity extends Activity{
 
                 if(passwd.isEmpty() || passwd.getBytes().length<10 || !passwd.equals(passwd2))
                 {
-                    Toast toast = Toast.makeText(PicActivity.this, "请确保长度和匹配", Toast.LENGTH_LONG);
+                    Toast toast = Toast.makeText(PicActivity.this, "请确保长度和匹配", Toast.LENGTH_SHORT);
                     toast.setGravity(Gravity.CENTER_VERTICAL, 10, 10);
                     toast.show();
                 }
@@ -159,12 +162,17 @@ public class PicActivity extends Activity{
                             }catch (IOException e) {e.printStackTrace();}
                             FileUtils fileUtils = new FileUtils();
                             fileUtils.move2E(imgPath+".usnea");
+                            fileUtils.delete(imgPath);
                             Looper.loop();
                         }
                     });
                     thread.start();
+                    Toast toast = Toast.makeText(PicActivity.this, "加密完成", Toast.LENGTH_SHORT);
+                    toast.setGravity(Gravity.CENTER_VERTICAL, 10, 10);
+                    toast.show();
                     break;
             }
         }
+
     }
 }
