@@ -1,5 +1,6 @@
 package wffgerYu.photoU.common;
 
+import android.net.Uri;
 import android.os.Environment;
 import java.io.File;
 import java.io.FileInputStream;
@@ -71,5 +72,10 @@ public class FileUtils {
     public void delete(String source) {
         File srcFile = new File(source);
         srcFile.delete();
+    }
+
+    public Uri getUri(String destination) {
+        File file = new File(destination);
+        return Uri.fromFile(file);
     }
 }

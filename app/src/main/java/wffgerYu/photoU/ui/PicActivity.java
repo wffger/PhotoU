@@ -3,12 +3,14 @@ package wffgerYu.photoU.ui;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.util.Base64;
 import android.view.Gravity;
@@ -43,6 +45,8 @@ public class PicActivity extends Activity{
     private EditText edt_passwd2 = null;
     private Button btn_passwd = null;
 
+    private Button btn_browse = null;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,6 +61,7 @@ public class PicActivity extends Activity{
         edt_passwd = (EditText)findViewById(R.id.edt_passwd);
         edt_passwd2 = (EditText)findViewById(R.id.edt_passwd2);
         btn_passwd = (Button)findViewById(R.id.btn_passwd);
+        btn_browse = (Button)findViewById(R.id.btn_browse);
         
         decryptImg.setOnClickListener(new OnClickListener() {
             @Override
@@ -135,6 +140,17 @@ public class PicActivity extends Activity{
                     editor.putString("textKey", Base64.encodeToString(passwd.getBytes(), Base64.DEFAULT));
                     editor.commit();
                 }
+            }
+        });
+
+        btn_browse.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ComponentName component = new ComponentName("com.alensw.PicFolder","com.alensw.PicFolder.GalleryActivity");
+                Intent intent = new Intent();
+                intent.setComponent(component);
+                intent.setData(new FileUtils().getUri(Environment.getExternalStorageDirectory().getPath() + "/.photoU/e/"));
+                startActivity(intent);
             }
         });
     }

@@ -68,4 +68,10 @@
         android:layout_height="wrap_content"
         android:text="确认密码"
         android:id="@+id/btn_passwd" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="浏览"
+        android:id="@+id/btn_browse" />
 </LinearLayout>
