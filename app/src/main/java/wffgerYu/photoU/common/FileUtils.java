@@ -1,5 +1,6 @@
 package wffgerYu.photoU.common;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Environment;
 import java.io.File;
@@ -77,5 +78,13 @@ public class FileUtils {
     public Uri getUri(String destination) {
         File file = new File(destination);
         return Uri.fromFile(file);
+    }
+
+    public Intent showFile(String path) {
+        Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+        intent.setType("*/*");
+        intent.setData(getUri(path));
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        return intent;
     }
 }

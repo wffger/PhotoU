@@ -20,6 +20,8 @@ import java.lang.ref.WeakReference;
 public class ImgUtils {
 
     public static final int XOR_CONST=0x99;
+    private static String xorString = "USnea";
+
     public static Bitmap convert2Bitmap(String path, int w, int h) {
         BitmapFactory.Options opts = new BitmapFactory.Options();
         opts.inJustDecodeBounds = true;     //只获取图大小
@@ -40,28 +42,52 @@ public class ImgUtils {
         return Bitmap.createScaledBitmap(weak.get(), w, h, true);
     }
 
-    public static  void encryptImg(String uri) throws IOException {
+    public static  void encryptImg(String uri){
         //创建加密文件，扩展名为usnea
         String uri2 = uri+".usnea";
         File newfile = new File(uri2);
         try{
             newfile.createNewFile();
+
+            FileInputStream fis = new FileInputStream(uri);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+
+            FileOutputStream fos = new FileOutputStream(uri2);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            int read;
+            while ((read=bis.read()) > -1) {
+                bos.write(read^XOR_CONST);
+            }
+            bos.close();
+            fos.close();
+            bis.close();
+            fis.close();
         }catch (IOException e){e.printStackTrace();}
-
-        FileInputStream fis = new FileInputStream(uri);
-        BufferedInputStream bis = new BufferedInputStream(fis);
-
-        FileOutputStream fos = new FileOutputStream(uri2);
-        BufferedOutputStream bos = new BufferedOutputStream(fos);
-        int read;
-        while ((read=bis.read()) > -1) {
-            bos.write(read^XOR_CONST);
-        }
-        bos.close();
-        fos.close();
-        bis.close();
-        fis.close();
     }
+
+    /*2014-7-4 11:35:50 wffger
+      加密后覆盖原件，加密字符串可修改*/
+    public static  void encryptImg2(String filePath){
+        File original = new File(filePath);
+        File secret = new File(filePath+".tmp");
+        try{
+            secret.createNewFile();
+            FileInputStream fis = new FileInputStream(original);
+            BufferedInputStream bis = new BufferedInputStream(fis);
+            FileOutputStream fos = new FileOutputStream(secret);
+            BufferedOutputStream bos = new BufferedOutputStream(fos);
+            int read;
+            while ((read=bis.read()) > -1) {
+                bos.write(read^XOR_CONST);
+            }
+            bos.close();
+            fos.close();
+            bis.close();
+            fis.close();
+        }catch (IOException e){e.printStackTrace();}
+        secret.renameTo(original);
+    }
+
     public static  void decryptImg() {
         try {
             String ePath = Environment.getExternalStorageDirectory().getPath() + "/.photoU/e/";
@@ -85,7 +111,7 @@ public class ImgUtils {
                     currentFile.renameTo(newFile);
                 }
             }
-        }catch (IOException e){e.printStackTrace();}
+        }catch (Exception e){e.printStackTrace();}
     }
 
     public static void ShowImg(String uri, ImageView iv) throws IOException {

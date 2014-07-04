@@ -26,6 +26,7 @@ import wffgerYu.photoU.bean.CryptoTools;
 import wffgerYu.photoU.common.FileUtils;
 import wffgerYu.photoU.common.ImgUtils;
 import wffgerYu.photoU.R;
+import wffgerYu.photoU.common.StringUtils;
 
 /**
  * Created by Kingsun on 14-6-17.
@@ -149,6 +150,7 @@ public class PicActivity extends Activity{
                 ComponentName component = new ComponentName("com.alensw.PicFolder","com.alensw.PicFolder.GalleryActivity");
                 Intent intent = new Intent();
                 intent.setComponent(component);
+                intent.setType("*/*");
                 intent.setData(new FileUtils().getUri(Environment.getExternalStorageDirectory().getPath() + "/.photoU/e/"));
                 startActivity(intent);
             }
@@ -174,11 +176,11 @@ public class PicActivity extends Activity{
                             ImgUtils bsf = new ImgUtils();
                             try
                             {
-                                bsf.encryptImg(imgPath);
-                            }catch (IOException e) {e.printStackTrace();}
-                            FileUtils fileUtils = new FileUtils();
+                                bsf.encryptImg2(imgPath);
+                            }catch (Exception e) {e.printStackTrace();}
+/*                            FileUtils fileUtils = new FileUtils();
                             fileUtils.move2E(imgPath+".usnea");
-                            fileUtils.delete(imgPath);
+                            fileUtils.delete(imgPath);*/
                             Looper.loop();
                         }
                     });
